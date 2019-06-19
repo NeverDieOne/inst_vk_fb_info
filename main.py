@@ -29,4 +29,16 @@ if __name__ == '__main__':
     user_id = bot.get_user_id_from_username('cocacolarus')
     user_medias = bot.get_total_user_medias(user_id)  # ID всех постов
 
-    posts_statistic = sum([get_post_statistic(post_id) for post_id in user_medias])
+    # Получаем счетчик user_id: количество коментариев
+    comments_top = collections.Counter()
+    comments_statistic = [get_post_statistic(post_id) for post_id in user_medias]
+    for comment in comments_statistic:
+        comments_top += comment
+
+    # Получаем счетчик user_id: количество откоментированных постов
+    posts_top = collections.Counter()
+    for post_id in user_medias:
+        commenters = set(bot.get_media_commenters(post_id))
+        for commenter in commenters:
+            if int(commenter) in comments_top:
+                posts_top[commenter] += 1
