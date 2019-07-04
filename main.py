@@ -3,9 +3,11 @@ import os
 from dotenv import load_dotenv
 import datetime
 import collections
+import requests
+from pprint import pprint
 
 
-def get_post_statistic(post_id, days=90) -> collections.Counter:
+def get_post_statistic(bot, post_id, days=90) -> collections.Counter:
     counter = collections.Counter()
     comments = bot.get_media_comments_all(post_id)
     today = datetime.datetime.now()
@@ -20,9 +22,7 @@ def get_post_statistic(post_id, days=90) -> collections.Counter:
     return counter
 
 
-if __name__ == '__main__':
-    load_dotenv()
-
+def get_inst_info():
     bot = Bot()
     bot.login(username=os.getenv('INST_LOGIN'), password=os.getenv('INST_PASSWORD'))
 
@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     # Получаем счетчик user_id: количество коментариев
     comments_top = collections.Counter()
-    comments_statistic = [get_post_statistic(post_id) for post_id in user_medias]
+    comments_statistic = [get_post_statistic(bot, post_id) for post_id in user_medias]
     for comment in comments_statistic:
         comments_top += comment
 
@@ -42,3 +42,30 @@ if __name__ == '__main__':
         for commenter in commenters:
             if int(commenter) in comments_top:
                 posts_top[commenter] += 1
+
+
+def get_vk_info():
+    page = 0
+    pages_number = 1
+
+    result = []
+
+    # while page < pages_number:
+    base_url = 'https://api.vk.com/method/wall.get'
+    base_params = {
+        'access_token': os.getenv('SERVICE_VK_TOKEN'),
+        'v': '5.95',
+        'domain': 'cocacola',
+        'count': 100,
+    }
+
+    response = requests.get(base_url, params=base_params)
+    result += response.json()['response']['items']
+
+    pprint(response.json())
+
+
+if __name__ == '__main__':
+    load_dotenv()
+
+    get_vk_info()
