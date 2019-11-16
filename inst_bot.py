@@ -1,18 +1,10 @@
 from instabot import Bot
 import os
 from dotenv import load_dotenv
-import datetime
 import collections
+from utils import check_comment_date
 
 load_dotenv()
-
-
-def check_comment_date(publish_date, period=90):
-    today = datetime.datetime.today().timestamp()
-    # Разница между сегодня и датай публикации < 90 дней в секундах
-    if today - publish_date < period * 24 * 60 * 60:
-        return True
-    return False
 
 
 def get_comments_top(bot, posts):
