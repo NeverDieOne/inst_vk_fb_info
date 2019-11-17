@@ -28,8 +28,7 @@ def get_user_posts(owner_id, post_per_page=100):
         'offset': 0
     }
 
-    # TODO предусмотреть возможность ограничить количество постов
-    posts = pagination(BASE_URL, 'wall.get', params, post_per_page)
+    posts = pagination(BASE_URL, 'wall.get', params, post_per_page, max_count=10)
     return posts
 
 
