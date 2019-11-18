@@ -3,6 +3,7 @@ import requests
 import os
 from utils import check_comment_date
 import datetime
+from pprint import pprint
 
 BASE_URL = 'https://graph.facebook.com'
 
@@ -41,32 +42,40 @@ def get_post_comments(post_id):
 def get_commenters_list(posts_ids):
     commenters = set()
     for post_id in posts_ids:
-        print(post_id)
-        # comments = get_post_comments(post_id)
-        # print(comments)
-        # for comment in comments:
-        #     commenters.add(comment['data']['from']['id'])
-        #     print(comment)
-
+        comments = get_post_comments(post_id)
+        for comment in comments:
+            commenters.add(comment['from']['id'])
     return commenters
 
 
-def get_comment_reaction(comment_id):
+def get_post_reaction(post_id):
     params = {
         'access_token': os.getenv('FB_ACCESS_TOKEN')
     }
-    response = requests.get(f"{BASE_URL}/{comment_id}/reactions", params=params)
+    response = requests.get(f"{BASE_URL}/{post_id}/reactions", params=params)
     response.raise_for_status()
 
-    return response.json()
+    return response.json()['data']
+
+
+def get_reactions_list(posts_ids):
+    reactions = dict()
+    for post_id in posts_ids:
+        post_reactions = get_post_reaction(post_id)
+        print(post_reactions)
+        # for reaction in post_reactions:
+        #     print(reaction)
+
+    return reactions
 
 
 def get_facebook_statistic(group_id):
     posts_ids = get_group_posts(group_id)
 
-    commenters_list = get_commenters_list(posts_ids)
+    # commenters_list = get_commenters_list(posts_ids)
+    reactions_list = get_reactions_list(posts_ids)
 
-    return commenters_list
+    return reactions_list
 
 
 if __name__ == '__main__':
