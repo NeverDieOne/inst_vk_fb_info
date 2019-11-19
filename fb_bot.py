@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 import requests
 import os
-import datetime
 from utils import check_comment_date_fb
 
 BASE_URL = 'https://graph.facebook.com'
@@ -44,7 +43,10 @@ def get_commenters_list(posts_ids):
         comments = get_post_comments(post_id)
         for comment in comments:
             if check_comment_date_fb(comment['created_time']):
-                commenters.add(comment['from']['id'])
+                try:
+                    commenters.add(comment['from']['id'])
+                except KeyError:
+                    pass
     return commenters
 
 

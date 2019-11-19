@@ -4,8 +4,6 @@ from dotenv import load_dotenv
 import collections
 from utils import check_comment_date
 
-load_dotenv()
-
 
 def get_comments_top(bot, posts):
     comments_top = collections.Counter()
@@ -17,7 +15,7 @@ def get_comments_top(bot, posts):
             if check_comment_date(post_comment_date):
                 comments_top[post_comment_user] += 1
 
-    return comments_top
+    return dict(comments_top)
 
 
 def get_posts_top(bot, posts):
@@ -34,7 +32,7 @@ def get_posts_top(bot, posts):
         for user in users:
             posts_top[user] += 1
 
-    return posts_top
+    return dict(posts_top)
 
 
 def get_inst_statistic(user_name):
@@ -55,4 +53,3 @@ if __name__ == '__main__':
 
     user_name_inst = 'cocacolarus'
     print(get_inst_statistic(user_name_inst))
-
