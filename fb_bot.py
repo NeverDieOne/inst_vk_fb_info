@@ -1,9 +1,8 @@
 from dotenv import load_dotenv
 import requests
 import os
-from utils import check_comment_date
 import datetime
-from pprint import pprint
+from utils import check_comment_date_fb
 
 BASE_URL = 'https://graph.facebook.com'
 
@@ -44,7 +43,8 @@ def get_commenters_list(posts_ids):
     for post_id in posts_ids:
         comments = get_post_comments(post_id)
         for comment in comments:
-            commenters.add(comment['from']['id'])
+            if check_comment_date_fb(comment['created_time']):
+                commenters.add(comment['from']['id'])
     return commenters
 
 
@@ -77,10 +77,10 @@ def get_reactions_list(posts_ids):
 def get_facebook_statistic(group_id):
     posts_ids = get_group_posts(group_id)
 
-    # commenters_list = get_commenters_list(posts_ids)
+    commenters_list = get_commenters_list(posts_ids)
     reactions_list = get_reactions_list(posts_ids)
 
-    return reactions_list
+    return commenters_list, reactions_list
 
 
 if __name__ == '__main__':
@@ -88,13 +88,3 @@ if __name__ == '__main__':
 
     group_id = get_group_id()
     print(get_facebook_statistic(group_id))
-
-
-
-
-
-
-
-
-
-

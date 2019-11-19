@@ -2,6 +2,15 @@ import datetime
 import requests
 
 
+def check_comment_date_fb(publish_date, period_days=30):
+    time = publish_date.split('T')[0]
+    year, month, day = time.split('-')
+
+    pub_date = datetime.datetime(year=int(year), month=int(month), day=int(day)).timestamp()
+
+    return check_comment_date(pub_date, period_days)
+
+
 def check_comment_date(publish_date, period_days=90):
     today = datetime.datetime.today().timestamp()
     # Разница между сегодня и датай публикации < 90 дней в секундах
@@ -35,4 +44,3 @@ def pagination(base_url, url_for_request, params: dict, obj_per_page, max_count=
             obj += page_response.json()['response']['items']
 
     return obj
-
