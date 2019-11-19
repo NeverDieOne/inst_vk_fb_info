@@ -62,10 +62,15 @@ def get_reactions_list(posts_ids):
     reactions = dict()
     for post_id in posts_ids:
         post_reactions = get_post_reaction(post_id)
-        print(post_reactions)
-        # for reaction in post_reactions:
-        #     print(reaction)
-
+        for reaction in post_reactions:
+            if reaction['id'] in reactions:
+                user_reactions = reactions.get(reaction['id'])
+                if reaction['type'] in user_reactions:
+                    user_reactions[reaction['type']] += 1
+                else:
+                    user_reactions[reaction['type']] = 1
+            else:
+                reactions[reaction['id']] = {}
     return reactions
 
 
