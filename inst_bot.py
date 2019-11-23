@@ -6,6 +6,10 @@ from utils import check_comment_date
 
 
 def get_comments_top(bot, posts):
+    """
+    Возвращает словарь, где ключами являются user_id, а значения - количество комментариев,
+    оставленных пользователем.
+    """
     comments_top = collections.Counter()
     for post_id in posts:
         post_comments = bot.get_media_comments_all(post_id)
@@ -19,6 +23,10 @@ def get_comments_top(bot, posts):
 
 
 def get_posts_top(bot, posts):
+    """
+    Возвращает словарь, где ключами являются user_id, а значения - количество постов, под котороыми
+    пользователь оставил комментарий.
+    """
     posts_top = collections.Counter()
     for post_id in posts:
         users = set()

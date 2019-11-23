@@ -7,6 +7,9 @@ BASE_URL = 'https://graph.facebook.com'
 
 
 def get_group_id():
+    """
+    Возвращает group_id, где пользователь является создателем.
+    """
     params = {
         'access_token': os.getenv('FB_ACCESS_TOKEN')
     }
@@ -18,6 +21,9 @@ def get_group_id():
 
 
 def get_group_posts(group_id):
+    """
+    Возвращает список постов в группе group_id.
+    """
     params = {
         'access_token': os.getenv('FB_ACCESS_TOKEN')
     }
@@ -28,6 +34,9 @@ def get_group_posts(group_id):
 
 
 def get_post_comments(post_id):
+    """
+    Возвращает список комментариев под постом post_id.
+    """
     params = {
         'access_token': os.getenv('FB_ACCESS_TOKEN')
     }
@@ -38,19 +47,22 @@ def get_post_comments(post_id):
 
 
 def get_commenters_list(posts_ids):
+    """
+    Возвращает список комментаторов под списком постов posts_ids.
+    """
     commenters = set()
     for post_id in posts_ids:
         comments = get_post_comments(post_id)
         for comment in comments:
             if check_comment_date_fb(comment['created_time']):
-                try:
-                    commenters.add(comment['from']['id'])
-                except KeyError:
-                    pass
+                commenters.add(comment['from']['id'])
     return commenters
 
 
 def get_post_reaction(post_id):
+    """
+    Возвращает список реакций на пост post_id.
+    """
     params = {
         'access_token': os.getenv('FB_ACCESS_TOKEN')
     }
@@ -61,6 +73,9 @@ def get_post_reaction(post_id):
 
 
 def get_reactions_list(posts_ids):
+    """
+    Возвращает словарь в котором ключами являются user_id, а значения - словари с подсчетом реакций пользователя.
+    """
     reactions = dict()
     for post_id in posts_ids:
         post_reactions = get_post_reaction(post_id)
