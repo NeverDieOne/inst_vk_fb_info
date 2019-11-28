@@ -23,24 +23,21 @@ def check_comment_date(publish_date, period_days=90):
 def pagination(base_url, url_for_request, params: dict, obj_per_page, max_count=None):
     obj = []
     response = requests.get(f"{base_url}/{url_for_request}", params=params).json()['response']
-    obj += response['items']
-    pages_number = response['count']
+    objcects_count = response['count']
 
-    if max_count:
-        obj_per_page = max_count  # Если max_count < obj_per_page, то вернется obj_per_page объектов
+    while params['offset'] < objcects_count:
+        page_response = requests.get(f"{base_url}/{url_for_request}", params=params)
+        page_response.raise_for_status()
+        params['offset'] += obj_per_page
 
-        while params['offset'] < pages_number and len(obj) < max_count:
-            params['offset'] += obj_per_page
-            page_response = requests.get(f"{base_url}/{url_for_request}", params=params)
-            page_response.raise_for_status()
-
-            obj += page_response.json()['response']['items']
-    else:
-        while params['offset'] < pages_number:
-            params['offset'] += obj_per_page
-            page_response = requests.get(f"{base_url}/{url_for_request}", params=params)
-            page_response.raise_for_status()
-
-            obj += page_response.json()['response']['items']
+        obj += page_response.json()['response']['items']
 
     return obj
+
+
+def get_offsets(obj_count, obj_per_page=100, max_count=None):
+    if max_count:
+        obj_count = max_count
+        if obj_count < obj_per_page:
+            obj_per_page = obj_count
+    return list(range(0, obj_count, obj_per_page))
