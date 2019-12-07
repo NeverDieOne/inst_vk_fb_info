@@ -91,7 +91,9 @@ def get_reactions_list(posts_ids):
     return reactions
 
 
-def get_facebook_statistic(group_id):
+def get_facebook_statistic():
+    group_id = get_group_id()
+
     posts_ids = get_group_posts(group_id)
 
     commenters_list = get_commenters_list(posts_ids)
@@ -103,5 +105,4 @@ def get_facebook_statistic(group_id):
 if __name__ == '__main__':
     load_dotenv()
 
-    group_id = get_group_id()
-    print(get_facebook_statistic(group_id))
+    print(get_facebook_statistic())
