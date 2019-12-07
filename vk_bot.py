@@ -2,13 +2,16 @@ import requests
 import os
 from dotenv import load_dotenv
 from contextlib import suppress
-from utils import check_comment_date, pagination
+from utils import check_comment_date, get_objects
 
 
 BASE_URL = 'https://api.vk.com/method/'
 
 
 def get_group_id_by_name(group_name):
+    """
+    Возвращает ID группы по её имени
+    """
     params = {
         'access_token': os.getenv('SERVICE_VK_TOKEN'),
         'v': 5.103,
@@ -19,49 +22,56 @@ def get_group_id_by_name(group_name):
     return response[0]['id']
 
 
-def get_user_posts(owner_id, post_per_page=100):
+def get_user_posts(owner_id, post_per_page=100, max_count=None):
+    """
+    Возвращает список постов owner_id. Есть возможность вернуть ограниченное число постов с помощью max_count
+    """
     params = {
         'access_token': os.getenv('SERVICE_VK_TOKEN'),
         'v': 5.103,
         'owner_id': -owner_id,
-        'count': post_per_page,
-        'offset': 0
     }
 
-    posts = pagination(BASE_URL, 'wall.get', params, post_per_page, max_count=10)
+    posts = get_objects(BASE_URL, 'wall.get', params, post_per_page, max_count)
     return posts
 
 
-def get_post_comments(owner_id, post_id, comments_pet_page=100):
+def get_post_comments(owner_id, post_id, comments_per_page=100, max_count=None):
+    """
+    Возвращает список комментов post_id. Есть возможость вернуть ограниченное число комметов с помощью max_count.
+    """
     params = {
         'access_token': os.getenv('SERVICE_VK_TOKEN'),
         'v': 5.103,
         'owner_id': -owner_id,
-        'post_id': post_id,
-        'count': comments_pet_page,
-        'offset': 0
+        'post_id': post_id
     }
 
-    comments = pagination(BASE_URL, 'wall.getComments', params, comments_pet_page)
+    comments = get_objects(BASE_URL, 'wall.getComments', params, comments_per_page, max_count)
     return comments
 
 
-def get_post_likers(owner_id, post_id, likers_per_page=100):
+def get_post_likers(owner_id, post_id, likers_per_page=100, max_count=None):
+    """
+    Возвращает список людей, которые лайкнули пост post_id. Есть возможность вернуть ограниченное число лайкнувших
+    с помощью max_count.
+    """
     params = {
         'access_token': os.getenv('SERVICE_VK_TOKEN'),
         'v': 5.103,
         'type': 'post',
         'owner_id': -owner_id,
-        'post_id': post_id,
-        'count': likers_per_page,
-        'offset': 0
+        'post_id': post_id
     }
 
-    likers = pagination(BASE_URL, 'likes.getList', params, likers_per_page)
+    likers = get_objects(BASE_URL, 'likes.getList', params, likers_per_page, max_count)
     return likers
 
 
 def get_commenters(group_id, posts) -> set:
+    """
+    Возвращает множество комментаторов из списка постов posts.
+    """
     users = set()
     for post in posts:
         print(post)
@@ -77,6 +87,9 @@ def get_commenters(group_id, posts) -> set:
 
 
 def get_likers(group_id, posts) -> set:
+    """
+    Возвращает множество лайкнувших из списка постов posts.
+    """
     users = set()
     for post in posts:
         post_id = post['id']
@@ -102,5 +115,3 @@ if __name__ == '__main__':
 
     group_name = 'cocacola'
     print(get_vk_statistic(group_name))
-
-

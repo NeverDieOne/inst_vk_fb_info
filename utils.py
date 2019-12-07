@@ -19,25 +19,39 @@ def check_comment_date(publish_date, period_days=90):
     return False
 
 
-# TODO придумать новое имя функции
-def pagination(base_url, url_for_request, params: dict, obj_per_page, max_count=None):
+def get_objects(base_url, url_for_request, params: dict, obj_per_page, max_count=None):
     obj = []
     response = requests.get(f"{base_url}/{url_for_request}", params=params).json()['response']
     objcects_count = response['count']
 
-    while params['offset'] < objcects_count:
-        page_response = requests.get(f"{base_url}/{url_for_request}", params=params)
-        page_response.raise_for_status()
-        params['offset'] += obj_per_page
+    for page in get_pagination(objcects_count, obj_per_page=obj_per_page, max_count=max_count):
+        params['offset'] = page[0]
+        params['count'] = page[1]
 
-        obj += page_response.json()['response']['items']
+        response = requests.get(f"{base_url}/{url_for_request}", params=params)
+        response.raise_for_status()
 
+        obj += response.json()['response']['items']
     return obj
 
 
-def get_offsets(obj_count, obj_per_page=100, max_count=None):
+def get_pagination(obj_count, obj_per_page=100, max_count=None):
+    """
+    Возвращает генератор, на каждой итерации которого возвращается список, первым аргументом которого
+    является текущее смещение, а вторым - количество объектов для запроса
+    """
+    current_offset = 0
+
     if max_count:
         obj_count = max_count
         if obj_count < obj_per_page:
             obj_per_page = obj_count
-    return list(range(0, obj_count, obj_per_page))
+
+    while obj_count > 0:
+        if obj_per_page > obj_count:
+            obj_per_page = obj_count
+
+        yield [current_offset, obj_per_page]
+
+        obj_count -= obj_per_page
+        current_offset += obj_per_page
