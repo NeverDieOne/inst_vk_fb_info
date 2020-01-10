@@ -43,10 +43,7 @@ def get_posts_top(bot, posts):
     return dict(posts_top)
 
 
-def get_inst_statistic(user_name):
-    bot = Bot(base_path='./inst')
-    bot.login(username=os.getenv('INST_LOGIN'), password=os.getenv('INST_PASSWORD'))
-
+def get_inst_statistic(bot, user_name):
     user_id = bot.get_user_id_from_username(user_name)
     user_posts = bot.get_total_user_medias(user_id)
 
@@ -59,5 +56,8 @@ def get_inst_statistic(user_name):
 if __name__ == '__main__':
     load_dotenv()
 
+    bot = Bot(base_path='./inst')
+    bot.login(username=os.getenv('INST_LOGIN'), password=os.getenv('INST_PASSWORD'))
+
     user_name_inst = 'cocacolarus'
-    print(get_inst_statistic(user_name_inst))
+    print(get_inst_statistic(bot, user_name_inst))
