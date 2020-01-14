@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 import collections
 from utils import check_comment_date
+from pprint import pprint
 
 
 def get_comments_top(bot, posts):
@@ -10,16 +11,12 @@ def get_comments_top(bot, posts):
     Возвращает словарь, где ключами являются user_id, а значения - количество комментариев,
     оставленных пользователем.
     """
-    comments_top = collections.Counter()
+    users = []
     for post_id in posts:
-        post_comments = bot.get_media_comments_all(post_id)
-        for post_comment in post_comments:
-            post_comment_date = post_comment['created_at']
-            post_comment_user = post_comment['user_id']
-            if check_comment_date(post_comment_date):
-                comments_top[post_comment_user] += 1
+        users += [comment['user_id'] for comment in bot.get_media_comments_all(post_id) if
+                  check_comment_date(comment['created_at'])]
 
-    return dict(comments_top)
+    return dict(collections.Counter(users))
 
 
 def get_posts_top(bot, posts):
@@ -60,4 +57,4 @@ if __name__ == '__main__':
     bot.login(username=os.getenv('INST_LOGIN'), password=os.getenv('INST_PASSWORD'))
 
     user_name_inst = 'cocacolarus'
-    print(get_inst_statistic(bot, user_name_inst))
+    pprint(get_inst_statistic(bot, user_name_inst))
