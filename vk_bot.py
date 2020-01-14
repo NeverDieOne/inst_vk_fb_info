@@ -86,22 +86,11 @@ def get_commenters(access_token, group_id, posts) -> set:
     return users
 
 
-def get_likers(access_token, group_id, posts) -> set:
+def get_likers(access_token, group_id, posts):
     """
     Возвращает множество лайкнувших из списка постов posts.
     """
-    users = set()
-    for post in posts:
-        post_id = post['id']
-        likers = set(get_post_likers(access_token, group_id, post_id))
-        users.union(likers)
-
-    return users
-
-
-def get_new_likers(access_token, group_id, posts):
-    # TODO write with list/set comprehension
-    pass
+    return (set(get_post_likers(access_token, group_id, post['id'])) for post in posts)
 
 
 def get_vk_statistic(access_token, group_name):
