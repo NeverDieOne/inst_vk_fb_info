@@ -74,9 +74,7 @@ def get_commenters(access_token, group_id, posts) -> set:
     """
     users = set()
     for post in posts:
-        print(post)
-        post_id = post['id']
-        comments = get_post_comments(access_token, group_id, post_id)
+        comments = get_post_comments(access_token, group_id, post['id'])
 
         for comment in comments:
             with suppress(KeyError):  # Может не быть from_id, т.к. будет deleted: True
