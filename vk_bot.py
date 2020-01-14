@@ -99,6 +99,11 @@ def get_likers(access_token, group_id, posts) -> set:
     return users
 
 
+def get_new_likers(access_token, group_id, posts):
+    # TODO write with list/set comprehension
+    pass
+
+
 def get_vk_statistic(access_token, group_name):
     group_id = get_group_id_by_name(access_token, group_name)
 

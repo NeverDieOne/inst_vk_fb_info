@@ -59,6 +59,11 @@ def get_commenters_list(access_token, posts_ids):
     return commenters
 
 
+def new_get_commenters_list(access_token, posts_ids):
+    # TODO write with list/set comprehension
+    pass
+
+
 def get_post_reaction(access_token, post_id):
     """
     Возвращает список реакций на пост post_id.
