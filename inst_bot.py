@@ -26,13 +26,8 @@ def get_posts_top(bot, posts):
     """
     posts_top = collections.Counter()
     for post_id in posts:
-        users = set()
-        post_comments = bot.get_media_comments_all(post_id)
-        for post_comment in post_comments:
-            post_comment_date = post_comment['created_at']
-            post_comment_user = post_comment['user_id']
-            if check_comment_date(post_comment_date):
-                users.add(post_comment_user)
+        users = (comment['user_id'] for comment in bot.get_media_comments_all(post_id) if
+                 check_comment_date(comment['created_at']))
 
         for user in users:
             posts_top[user] += 1
