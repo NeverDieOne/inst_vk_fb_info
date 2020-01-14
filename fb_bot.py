@@ -53,9 +53,8 @@ def get_commenters_list(access_token, posts_ids):
     commenters = set()
     for post_id in posts_ids:
         comments = get_post_comments(access_token, post_id)
-        for comment in comments:
-            if check_comment_date_fb(comment['created_time']):
-                commenters.add(comment['from']['id'])
+        commenters += (comment['from']['id'] for comment in comments if check_comment_date_fb(comment['created_time']))
+
     return commenters
 
 
