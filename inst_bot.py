@@ -3,7 +3,6 @@ import os
 from dotenv import load_dotenv
 import collections
 from utils import check_comment_date
-from pprint import pprint
 
 
 def get_comments_top(bot, posts):
@@ -52,4 +51,4 @@ if __name__ == '__main__':
     bot.login(username=os.getenv('INST_LOGIN'), password=os.getenv('INST_PASSWORD'))
 
     user_name_inst = 'cocacolarus'
-    pprint(get_inst_statistic(bot, user_name_inst))
+    print(get_inst_statistic(bot, user_name_inst))
