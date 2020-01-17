@@ -19,7 +19,7 @@ def check_comment_date(publish_date, period_days=90):
     return False
 
 
-def get_objects(base_url, url_for_request, params: dict, obj_per_page, max_count=None):
+def get_objects_from_vk_request(base_url, url_for_request, params: dict, obj_per_page, max_count=None):
     obj = []
     response = requests.get(f"{base_url}/{url_for_request}", params=params).json()['response']
     objcects_count = response['count']
@@ -36,12 +36,21 @@ def get_objects(base_url, url_for_request, params: dict, obj_per_page, max_count
 
 
 def get_pagination(obj_count, obj_per_page=100, max_count=None):
+    """Пагинатор
+
+    Возвращает генератор, на каждой итерации которого возвращается список:
+    1 элемент - смешение (offset)
+    2 элемент - количество объектов для запроса (count)
+
+    Args:
+        obj_count:
+        obj_per_page:
+        max_count:
+
+    Returns:
+        generator:
     """
-    Возвращает генератор.
-    На каждой итерации возвращается список.
-    1ый элемент - смещение (offset)
-    2ой элемент - количество объектов для запроса (count)
-    """
+
     current_offset = 0
 
     if max_count:

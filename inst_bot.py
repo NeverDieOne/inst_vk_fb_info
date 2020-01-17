@@ -6,9 +6,16 @@ from utils import check_comment_date
 
 
 def get_comments_top(bot, posts):
-    """
-    Возвращает словарь, где ключами являются user_id, а значения - количество комментариев,
-    оставленных пользователем.
+    """Топ по количеству комментариев.
+
+    Возвращает топ людей по колличеству оставленных комментариев под всеми постами.
+
+    Args:
+        bot: instance класса Bot
+        posts (list): список постов, по которым требуется посчитать комментарии
+
+    Returns:
+        dict: {user_id: comments_count}
     """
     users = []
     for post_id in posts:
@@ -19,17 +26,23 @@ def get_comments_top(bot, posts):
 
 
 def get_posts_top(bot, posts):
-    """
-    Возвращает словарь, где ключами являются user_id, а значения - количество постов, под котороыми
-    пользователь оставил комментарий.
+    """Топ по количеству постов.
+
+    Возвращает топ людей по количеству прокоммментированных постов.
+
+    Args:
+        bot: instance класса Bot
+        posts (list): список постов, по которым необходимо составить топ
+
+    Returns:
+        dict: {user_id: posts_count}
     """
     posts_top = collections.Counter()
     for post_id in posts:
         users = (comment['user_id'] for comment in bot.get_media_comments_all(post_id) if
                  check_comment_date(comment['created_at']))
 
-        for user in users:
-            posts_top[user] += 1
+        posts_top += collections.Counter(users)
 
     return dict(posts_top)
 

@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import requests
 import os
 from utils import check_comment_date_fb
+import collections
 
 BASE_URL = 'https://graph.facebook.com'
 
@@ -58,11 +59,6 @@ def get_commenters_list(access_token, posts_ids):
     return commenters
 
 
-def new_get_commenters_list(access_token, posts_ids):
-    # TODO write with list/set comprehension
-    pass
-
-
 def get_post_reaction(access_token, post_id):
     """
     Возвращает список реакций на пост post_id.
@@ -80,18 +76,17 @@ def get_reactions_list(access_token, posts_ids):
     """
     Возвращает словарь в котором ключами являются user_id, а значения - словари с подсчетом реакций пользователя.
     """
-    reactions = dict()
+    reactions = collections.defaultdict(collections.Counter)
     for post_id in posts_ids:
+
         post_reactions = get_post_reaction(access_token, post_id)
+
         for reaction in post_reactions:
-            if reaction['id'] in reactions:
-                user_reactions = reactions.get(reaction['id'])
-                if reaction['type'] in user_reactions:
-                    user_reactions[reaction['type']] += 1
-                else:
-                    user_reactions[reaction['type']] = 1
-            else:
-                reactions[reaction['id']] = {}
+            reaction_type = reaction['type']
+            user_id = reaction['id']
+
+            reactions[user_id] += collections.Counter([reaction_type])
+
     return reactions
 
 
@@ -100,10 +95,12 @@ def get_facebook_statistic(access_token):
 
     posts_ids = get_group_posts(access_token, group_id)
 
-    commenters_list = get_commenters_list(access_token, posts_ids)
-    reactions_list = get_reactions_list(access_token, posts_ids)
+    return get_reactions_list(access_token, posts_ids)
 
-    return commenters_list, reactions_list
+    # commenters_list = get_commenters_list(access_token, posts_ids)
+    # reactions_list = get_reactions_list(access_token, posts_ids)
+    #
+    # return commenters_list, reactions_list
 
 
 if __name__ == '__main__':

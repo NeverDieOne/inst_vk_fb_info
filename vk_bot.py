@@ -2,7 +2,7 @@ import requests
 import os
 from dotenv import load_dotenv
 from contextlib import suppress
-from utils import check_comment_date, get_objects
+from utils import check_comment_date, get_objects_from_vk_request
 
 
 BASE_URL = 'https://api.vk.com/method/'
@@ -32,7 +32,7 @@ def get_user_posts(access_token, owner_id, post_per_page=100, max_count=None):
         'owner_id': -owner_id,
     }
 
-    posts = get_objects(BASE_URL, 'wall.get', params, post_per_page, max_count)
+    posts = get_objects_from_vk_request(BASE_URL, 'wall.get', params, post_per_page, max_count)
     return posts
 
 
@@ -47,7 +47,7 @@ def get_post_comments(access_token, owner_id, post_id, comments_per_page=100, ma
         'post_id': post_id
     }
 
-    comments = get_objects(BASE_URL, 'wall.getComments', params, comments_per_page, max_count)
+    comments = get_objects_from_vk_request(BASE_URL, 'wall.getComments', params, comments_per_page, max_count)
     return comments
 
 
@@ -64,7 +64,7 @@ def get_post_likers(access_token ,owner_id, post_id, likers_per_page=100, max_co
         'post_id': post_id
     }
 
-    likers = get_objects(BASE_URL, 'likes.getList', params, likers_per_page, max_count)
+    likers = get_objects_from_vk_request(BASE_URL, 'likes.getList', params, likers_per_page, max_count)
     return likers
 
 
